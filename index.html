@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Folio — A curated collection of extraordinary books handpicked for discerning readers." />
+  <title>Folio — Curated Books for Discerning Readers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Variables ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #1a1208;
+      --parchment: #f5f0e8;
+      --cream:     #faf7f2;
+      --gold:      #b8860b;
+      --gold-lt:   #d4a843;
+      --rust:      #8b3a2a;
+      --sage:      #4a5c4e;
+      --mist:      #e8e2d8;
+      --ink-60:    #1a1208aa;
+      --ink-30:    #1a120855;
+
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Lora', Georgia, serif;
+      --font-mono:    'DM Mono', monospace;
+
+      --radius-sm: 4px;
+      --radius-md: 10px;
+      --radius-lg: 18px;
+
+      --shadow-card: 0 4px 24px rgba(26,18,8,.13), 0 1px 4px rgba(26,18,8,.08);
+      --shadow-hover: 0 12px 40px rgba(26,18,8,.2), 0 2px 8px rgba(26,18,8,.12);
+
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--parchment);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ─── Skip Link (WCAG 2.4.1) ──────────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: .875rem;
+      z-index: 9999;
+      text-decoration: none;
+      border-radius: 0 0 var(--radius-sm) 0;
+    }
+    .skip-link:focus { top: 0; outline: 3px solid var(--gold); outline-offset: 2px; }
+
+    /* ─── Focus Styles (WCAG 2.4.7) ──────────────────────────────────── */
+    :focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ─── Views ──────────────────────────────────────────────────────── */
+    .view { display: none; min-height: 100vh; }
+    .view.active { display: flex; flex-direction: column; }
+
+    /* ════════════════════════════════════════════════════════════════════
+       LOGIN PAGE
+    ════════════════════════════════════════════════════════════════════ */
+    #login-view {
+      align-items: center;
+      justify-content: center;
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative background pattern */
+    #login-view::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(184,134,11,.08) 59px, rgba(184,134,11,.08) 60px),
+        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(184,134,11,.08) 59px, rgba(184,134,11,.08) 60px);
+      pointer-events: none;
+    }
+
+    #login-view::after {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(184,134,11,.12) 0%, transparent 70%);
+      top: -150px; right: -150px;
+      pointer-events: none;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      background: var(--cream);
+      border-radius: var(--radius-lg);
+      padding: 56px 48px;
+      width: min(480px, 92vw);
+      box-shadow: 0 32px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(184,134,11,.2);
+      animation: slideUp .5s ease both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .login-logo .wordmark {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.02em;
+      line-height: 1;
+      display: block;
+    }
+
+    .login-logo .tagline {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 6px;
+      display: block;
+    }
+
+    .login-logo .ornament {
+      display: block;
+      color: var(--gold);
+      font-size: 1.4rem;
+      margin-top: 10px;
+      opacity: .6;
+    }
+
+    .login-heading {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-group .input-wrap { position: relative; }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--mist);
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink);
+      background: white;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .form-group input:hover { border-color: var(--gold-lt); }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(184,134,11,.18);
+    }
+
+    .form-group input[aria-invalid="true"] {
+      border-color: var(--rust);
+      box-shadow: 0 0 0 3px rgba(139,58,42,.15);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--sage);
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      font-size: .8rem;
+      font-family: var(--font-mono);
+      transition: color var(--transition);
+    }
+    .password-toggle:hover { color: var(--gold); }
+
+    .error-banner {
+      display: none;
+      background: #fdf2f1;
+      border: 1.5px solid var(--rust);
+      border-radius: var(--radius-md);
+      padding: 11px 14px;
+      margin-bottom: 18px;
+      font-size: .9rem;
+      color: var(--rust);
+      font-family: var(--font-body);
+    }
+    .error-banner.visible { display: flex; align-items: center; gap: 8px; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--ink);
+      color: var(--parchment);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: .02em;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(184,134,11,.15), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .btn-primary:hover { background: #2e200c; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,18,8,.25); }
+    .btn-primary:hover::after { opacity: 1; }
+    .btn-primary:active { transform: translateY(0); }
+
+    .login-hint {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: var(--ink-60);
+      margin-top: 22px;
+      letter-spacing: .04em;
+    }
+    .login-hint code {
+      background: var(--mist);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: var(--sage);
+    }
+
+    /* ════════════════════════════════════════════════════════════════════
+       CATALOGUE PAGE
+    ════════════════════════════════════════════════════════════════════ */
+    #catalogue-view { background: var(--parchment); }
+
+    /* Header */
+    .site-header {
+      background: var(--ink);
+      color: var(--parchment);
+      padding: 0 clamp(16px, 5vw, 64px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,.3);
+    }
+
+    .header-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+
+    .site-logo {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--parchment);
+      text-decoration: none;
+      letter-spacing: -.02em;
+    }
+    .site-logo span { color: var(--gold-lt); }
+
+    nav[aria-label="Primary navigation"] ul {
+      list-style: none;
+      display: flex;
+      gap: 6px;
+    }
+
+    nav[aria-label="Primary navigation"] a {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,.65);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+    }
+    nav[aria-label="Primary navigation"] a:hover,
+    nav[aria-label="Primary navigation"] a[aria-current="page"] {
+      color: var(--gold-lt);
+      background: rgba(184,134,11,.1);
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+
+    .btn-logout {
+      background: transparent;
+      border: 1.5px solid rgba(184,134,11,.4);
+      color: var(--gold-lt);
+      padding: 7px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+    }
+    .btn-logout:hover {
+      background: rgba(184,134,11,.12);
+      border-color: var(--gold-lt);
+      color: var(--gold-lt);
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: var(--ink);
+      color: var(--parchment);
+      padding: 72px clamp(16px, 5vw, 64px) 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '"';
+      font-family: var(--font-display);
+      font-size: 32rem;
+      font-weight: 700;
+      color: rgba(184,134,11,.05);
+      position: absolute;
+      top: -80px; right: -20px;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      aria-hidden: true;
+    }
+
+    .hero-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px; height: 1px;
+      background: var(--gold);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      max-width: 720px;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold-lt); }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(245,240,232,.7);
+      max-width: 540px;
+      margin-top: 18px;
+      line-height: 1.7;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 44px;
+      flex-wrap: wrap;
+    }
+
+    .stat dt {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,.5);
+    }
+    .stat dd {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--gold-lt);
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+
+    /* Main content */
+    main { max-width: 1320px; margin: 0 auto; padding: 0 clamp(16px, 5vw, 64px) 80px; }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 52px 0 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .section-header h2::after {
+      content: '';
+      display: block;
+      height: 2px;
+      width: 40px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .section-count {
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: var(--gold);
+      letter-spacing: .1em;
+      background: rgba(184,134,11,.08);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(184,134,11,.2);
+    }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      align-items: center;
+    }
+
+    .filter-bar label {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-60);
+      margin-right: 4px;
+    }
+
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--mist);
+      background: white;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      letter-spacing: .06em;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .filter-btn.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--parchment);
+    }
+    .filter-btn[aria-pressed="true"] {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--parchment);
+    }
+
+    /* Book grid */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+      gap: 28px;
+    }
+
+    /* Book card */
+    .book-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(26,18,8,.06);
+    }
+    .book-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+    .book-card:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+    .book-cover {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: var(--mist);
+    }
+
+    .book-cover-art {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: clamp(.9rem, 2vw, 1.15rem);
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+    .cover-author {
+      font-family: var(--font-body);
+      font-size: .78rem;
+      color: rgba(255,255,255,.75);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .book-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-family: var(--font-mono);
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 20px;
+      background: rgba(0,0,0,.35);
+      color: white;
+      backdrop-filter: blur(4px);
+      z-index: 2;
+    }
+    .book-badge.bestseller { background: rgba(184,134,11,.85); }
+    .book-badge.new { background: rgba(74,92,78,.85); }
+    .book-badge.award { background: rgba(139,58,42,.85); }
+
+    .book-info { padding: 20px 20px 22px; flex: 1; display: flex; flex-direction: column; }
+
+    .book-genre {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .book-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .book-title a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .book-title a:hover { color: var(--gold); text-decoration: underline; }
+
+    .book-author {
+      font-size: .88rem;
+      color: var(--sage);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .book-desc {
+      font-size: .85rem;
+      color: var(--ink-60);
+      line-height: 1.55;
+      flex: 1;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .book-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .book-rating {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .stars { color: var(--gold); font-size: .85rem; letter-spacing: -.02em; }
+    .rating-num {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--ink-60);
+    }
+
+    .book-price {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .book-year {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      color: var(--ink-60);
+      letter-spacing: .06em;
+    }
+
+    .btn-add {
+      width: 100%;
+      padding: 11px;
+      background: var(--ink);
+      color: var(--parchment);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .btn-add:hover { background: var(--gold); transform: scale(1.01); }
+    .btn-add:active { transform: scale(.99); }
+
+    /* Featured strip */
+    .featured-strip {
+      background: var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 40px 40px;
+      margin: 52px 0 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      color: var(--parchment);
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-strip::before {
+      content: '❧';
+      font-size: 10rem;
+      color: rgba(184,134,11,.06);
+      position: absolute;
+      right: 140px; top: -10px;
+      pointer-events: none;
+      user-select: none;
+    }
+    .featured-label {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      margin-bottom: 10px;
+    }
+    .featured-text h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 8px;
+    }
+    .featured-text p {
+      font-size: .9rem;
+      color: rgba(245,240,232,.65);
+      max-width: 480px;
+    }
+    .btn-browse {
+      white-space: nowrap;
+      padding: 13px 28px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-browse:hover { background: var(--gold-lt); transform: scale(1.03); }
+
+    /* Footer */
+    .site-footer {
+      background: var(--ink);
+      color: rgba(245,240,232,.5);
+      padding: 36px clamp(16px, 5vw, 64px);
+      text-align: center;
+      margin-top: 48px;
+    }
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--parchment); }
+    .footer-copy { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .06em; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,.4);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--gold-lt); }
+
+    /* ─── Responsive ──────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .login-card { padding: 40px 28px; }
+      nav[aria-label="Primary navigation"] { display: none; }
+      .hero-stats { gap: 24px; }
+      .featured-strip { grid-template-columns: 1fr; }
+      .featured-strip::before { display: none; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+
+    @media (max-width: 480px) {
+      .books-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Print ────────────────────────────────────────────────────────── */
+    @media print {
+      .site-header, .btn-logout, .btn-add, .featured-strip { display: none; }
+      .book-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    }
+
+    /* ─── Reduced motion (WCAG 2.3.3) ───────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    /* ─── High contrast mode ─────────────────────────────────────────── */
+    @media (forced-colors: active) {
+      .book-cover-art { forced-color-adjust: none; }
+      .btn-primary, .btn-add, .btn-browse { border: 2px solid ButtonText; }
+    }
+
+    /* Live region for announcements */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Skip navigation (WCAG 2.4.1) -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- Live region for dynamic announcements (WCAG 4.1.3) -->
+  <div id="live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       LOGIN VIEW
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="login-view" class="view active" role="main" aria-label="Login page">
+    <div class="login-card" role="region" aria-label="Sign in form">
+
+      <div class="login-logo">
+        <span class="wordmark" aria-label="Folio">Folio</span>
+        <span class="tagline" aria-hidden="true">Curated Literature</span>
+        <span class="ornament" aria-hidden="true">❦</span>
+      </div>
+
+      <h1 class="login-heading">Welcome back, reader</h1>
+
+      <!-- Error alert (WCAG 3.3.1) -->
+      <div
+        id="login-error"
+        class="error-banner"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <span aria-hidden="true">⚠</span>
+        <span id="login-error-text">Invalid username or password. Please try again.</span>
+      </div>
+
+      <form id="login-form" novalidate aria-label="Sign in">
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <div class="input-wrap">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              autocomplete="username"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              required
+              aria-required="true"
+              aria-describedby="username-hint"
+              placeholder="Enter your username"
+            />
+          </div>
+          <span id="username-hint" class="sr-only">Enter your account username</span>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              autocomplete="current-password"
+              required
+              aria-required="true"
+              aria-describedby="password-hint"
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              id="pwd-toggle"
+              aria-label="Show password"
+              aria-controls="password"
+              aria-pressed="false"
+            >show</button>
+          </div>
+          <span id="password-hint" class="sr-only">Enter your account password</span>
+        </div>
+
+        <button type="submit" class="btn-primary" id="login-btn">
+          Enter the Library
+        </button>
+      </form>
+
+      <p class="login-hint" aria-label="Demo credentials">
+        Demo — username: <code>reader</code> &nbsp;·&nbsp; password: <code>books2024</code>
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       CATALOGUE VIEW
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="catalogue-view" class="view" aria-label="Book catalogue">
+
+    <!-- Site Header -->
+    <header class="site-header" role="banner">
+      <div class="header-inner">
+        <a href="#main-content" class="site-logo" aria-label="Folio home">Folio<span aria-hidden="true">.</span></a>
+
+        <nav aria-label="Primary navigation">
+          <ul role="list">
+            <li><a href="#" aria-current="page">Catalogue</a></li>
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Collections</a></li>
+            <li><a href="#">Authors</a></li>
+            <li><a href="#">About</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <button
+            id="logout-btn"
+            class="btn-logout"
+            aria-label="Sign out of your account"
+          >Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-inner">
+        <p class="hero-eyebrow" aria-hidden="true">Spring 2026 Edition</p>
+        <h1 id="hero-heading">
+          Stories that <em>move</em><br />the human spirit
+        </h1>
+        <p class="hero-sub">
+          Handpicked by our editorial team — fiction, history, science, and philosophy
+          for minds that never stop asking questions.
+        </p>
+        <dl class="hero-stats" aria-label="Library statistics">
+          <div class="stat">
+            <dt>Books Curated</dt>
+            <dd>4,200+</dd>
+          </div>
+          <div class="stat">
+            <dt>Authors</dt>
+            <dd>1,800+</dd>
+          </div>
+          <div class="stat">
+            <dt>Genres</dt>
+            <dd>38</dd>
+          </div>
+          <div class="stat">
+            <dt>Members</dt>
+            <dd>52K</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Main Catalogue -->
+    <main id="main-content" tabindex="-1">
+
+      <!-- Section header + filters -->
+      <div class="section-header">
+        <h2 id="catalogue-heading">Featured Books</h2>
+        <span class="section-count" aria-label="12 books shown">12 titles</span>
+      </div>
+
+      <!-- Filter controls (WCAG 4.1.2) -->
+      <div
+        class="filter-bar"
+        role="group"
+        aria-label="Filter books by genre"
+      >
+        <span id="filter-label" class="sr-only">Filter by genre:</span>
+        <button class="filter-btn active" aria-pressed="true" data-filter="all" aria-label="Show all genres">All</button>
+        <button class="filter-btn" aria-pressed="false" data-filter="fiction" aria-label="Filter by Fiction">Fiction</button>
+        <button class="filter-btn" aria-pressed="false" data-filter="nonfiction" aria-label="Filter by Non-Fiction">Non-Fiction</button>
+        <button class="filter-btn" aria-pressed="false" data-filter="science" aria-label="Filter by Science">Science</button>
+        <button class="filter-btn" aria-pressed="false" data-filter="history" aria-label="Filter by History">History</button>
+        <button class="filter-btn" aria-pressed="false" data-filter="philosophy" aria-label="Filter by Philosophy">Philosophy</button>
+      </div>
+
+      <!-- Book grid -->
+      <div
+        id="books-grid"
+        class="books-grid"
+        role="list"
+        aria-label="Book catalogue"
+        aria-live="polite"
+        aria-relevant="additions removals"
+      ></div>
+
+      <!-- Featured strip -->
+      <aside class="featured-strip" aria-label="Newsletter promotion">
+        <div class="featured-text">
+          <p class="featured-label" aria-hidden="true">✦ Editor's Circle</p>
+          <h2>Discover your next<br />obsession</h2>
+          <p>Join 52,000 readers who receive our weekly editorial — curated new releases, author interviews, and reading guides delivered every Friday.</p>
+        </div>
+        <button class="btn-browse" aria-label="Subscribe to the Editor's Circle newsletter">
+          Subscribe Free
+        </button>
+      </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="footer-inner">
+        <span class="footer-logo" aria-label="Folio">Folio</span>
+        <nav aria-label="Footer navigation" class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Accessibility</a>
+          <a href="#">Contact</a>
+        </nav>
+        <p class="footer-copy">© 2026 Folio Literary Co. All rights reserved.</p>
+      </div>
+    </footer>
+
+  </div><!-- /catalogue-view -->
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       JavaScript
+  ══════════════════════════════════════════════════════════════════ -->
+  <script>
+  (() => {
+    'use strict';
+
+    /* ─── Credentials (hardcoded, demo only) ──── */
+    const AUTH = { username: 'reader', password: 'books2024' };
+
+    /* ─── Book data ───────────────────────────── */
+    const BOOKS = [
+      {
+        id: 1, title: 'The Midnight Library', author: 'Matt Haig',
+        genre: 'fiction', year: 2020,
+        desc: 'Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived.',
+        price: 16.99, rating: 4.7, reviews: 3821,
+        badge: 'bestseller',
+        colors: ['#1a3a2a', '#2d5a3d'],
+        icon: '🌌'
+      },
+      {
+        id: 2, title: 'Sapiens', author: 'Yuval Noah Harari',
+        genre: 'history', year: 2011,
+        desc: 'A brief history of humankind — from the Stone Age to the Silicon Age. How did our species conquer the planet and become its undisputed master?',
+        price: 18.99, rating: 4.6, reviews: 5204,
+        badge: 'bestseller',
+        colors: ['#2a1a3a', '#4d2d5a'],
+        icon: '🌍'
+      },
+      {
+        id: 3, title: 'A Gentleman in Moscow', author: 'Amor Towles',
+        genre: 'fiction', year: 2016,
+        desc: 'Count Alexander Rostov is sentenced to house arrest inside the Metropol Hotel. An exquisite tale of wit, wonder, and the endurance of the human spirit.',
+        price: 15.99, rating: 4.8, reviews: 4112,
+        badge: 'award',
+        colors: ['#3a1a1a', '#5a2d2d'],
+        icon: '🏛'
+      },
+      {
+        id: 4, title: 'The Code Breaker', author: 'Walter Isaacson',
+        genre: 'science', year: 2021,
+        desc: 'The story of Jennifer Doudna, CRISPR, and the future of the human race — a fascinating account of genetic science and the ethical questions it raises.',
+        price: 22.99, rating: 4.5, reviews: 1830,
+        badge: 'new',
+        colors: ['#0d2a3a', '#1a4d5a'],
+        icon: '🧬'
+      },
+      {
+        id: 5, title: 'Meditations', author: 'Marcus Aurelius',
+        genre: 'philosophy', year: 180,
+        desc: 'Written as a personal journal, the Roman Emperor\'s private reflections on Stoic philosophy remain a timeless guide to resilience, clarity, and virtue.',
+        price: 11.99, rating: 4.9, reviews: 7620,
+        badge: null,
+        colors: ['#2a2210', '#4d3f1a'],
+        icon: '⚖'
+      },
+      {
+        id: 6, title: 'Babel', author: 'R.F. Kuang',
+        genre: 'fiction', year: 2022,
+        desc: 'A richly imagined dark academia novel about translation, colonialism, and the power of language, set in an alternate 1830s Oxford.',
+        price: 19.99, rating: 4.6, reviews: 2940,
+        badge: 'award',
+        colors: ['#1a1a2a', '#2d2d5a'],
+        icon: '🗼'
+      },
+      {
+        id: 7, title: 'Being Mortal', author: 'Atul Gawande',
+        genre: 'nonfiction', year: 2014,
+        desc: 'A compassionate and clear-eyed look at how medicine fails the elderly and the dying, and how it could do better, by a practicing surgeon and writer.',
+        price: 14.99, rating: 4.7, reviews: 3375,
+        badge: null,
+        colors: ['#0a2a1a', '#124d2e'],
+        icon: '🌿'
+      },
+      {
+        id: 8, title: 'The Innovators', author: 'Walter Isaacson',
+        genre: 'history', year: 2014,
+        desc: 'How a group of inventors, hackers, geniuses, and geeks created the digital revolution — a sweeping narrative of the people who built our modern world.',
+        price: 17.99, rating: 4.4, reviews: 2201,
+        badge: null,
+        colors: ['#1a2a2a', '#2d4d4d'],
+        icon: '💡'
+      },
+      {
+        id: 9, title: 'Project Hail Mary', author: 'Andy Weir',
+        genre: 'fiction', year: 2021,
+        desc: 'Ryland Grace wakes up alone on a spaceship, with no memory and the fate of Earth resting on his shoulders. A solo mission. An impossible problem. One chance.',
+        price: 17.99, rating: 4.9, reviews: 6103,
+        badge: 'bestseller',
+        colors: ['#0a0a2a', '#12124d'],
+        icon: '🚀'
+      },
+      {
+        id: 10, title: 'The Structure of Scientific Revolutions', author: 'Thomas Kuhn',
+        genre: 'science', year: 1962,
+        desc: 'The landmark study that introduced the concept of the "paradigm shift" — one of the most cited and influential works in 20th-century academic publishing.',
+        price: 13.99, rating: 4.5, reviews: 1844,
+        badge: null,
+        colors: ['#1a2a1a', '#2d4d2d'],
+        icon: '🔬'
+      },
+      {
+        id: 11, title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman',
+        genre: 'nonfiction', year: 2011,
+        desc: 'Nobel laureate Kahneman takes us on a journey into the two systems that drive the way we think — and reveals the biases that affect our everyday decisions.',
+        price: 16.99, rating: 4.6, reviews: 4789,
+        badge: null,
+        colors: ['#2a1a0a', '#4d2d0f'],
+        icon: '🧠'
+      },
+      {
+        id: 12, title: 'The Dawn of Everything', author: 'David Graeber & David Wengrow',
+        genre: 'history', year: 2021,
+        desc: 'A radical new history of humanity, challenging conventional stories about how human societies evolved and revealing a far richer range of human possibility.',
+        price: 21.99, rating: 4.5, reviews: 2012,
+        badge: 'new',
+        colors: ['#2a1a2a', '#4d2d4d'],
+        icon: '🏺'
+      }
+    ];
+
+    /* ─── Helpers ──────────────────────────────────────────── */
+    const $ = id => document.getElementById(id);
+    const announce = msg => { $('live-region').textContent = ''; $('live-region').textContent = msg; };
+
+    function renderStars(rating) {
+      const full = Math.floor(rating);
+      const half = rating % 1 >= 0.5;
+      let s = '★'.repeat(full);
+      if (half) s += '½';
+      return s;
+    }
+
+    function formatReviews(n) {
+      return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n;
+    }
+
+    /* ─── Render books ───────────────────────────────────────── */
+    function renderBooks(filter = 'all') {
+      const grid = $('books-grid');
+      const filtered = filter === 'all' ? BOOKS : BOOKS.filter(b => b.genre === filter);
+
+      grid.innerHTML = filtered.map(book => {
+        const gradientStart = book.colors[0];
+        const gradientEnd   = book.colors[1];
+        const badgeMap = { bestseller: 'Bestseller', new: 'New', award: 'Award Winner' };
+        const badgeHTML = book.badge
+          ? `<span class="book-badge ${book.badge}" aria-label="${badgeMap[book.badge]}">${badgeMap[book.badge]}</span>`
+          : '';
+
+        const genreLabel = { fiction:'Fiction', nonfiction:'Non-Fiction', science:'Science', history:'History', philosophy:'Philosophy' }[book.genre];
+
+        return `
+          <article class="book-card" role="listitem" aria-label="${book.title} by ${book.author}">
+            <div class="book-cover" aria-hidden="true">
+              <div class="book-cover-art" style="background: linear-gradient(150deg, ${gradientStart}, ${gradientEnd})">
+                <div style="font-size:3rem;opacity:.85" aria-hidden="true">${book.icon}</div>
+                <span class="cover-title">${book.title}</span>
+                <span class="cover-author">${book.author}</span>
+                ${badgeHTML}
+              </div>
+            </div>
+            <div class="book-info">
+              <p class="book-genre">${genreLabel} · ${book.year}</p>
+              <h3 class="book-title">
+                <a href="#" aria-label="Learn more about ${book.title}">${book.title}</a>
+              </h3>
+              <p class="book-author">by ${book.author}</p>
+              <p class="book-desc">${book.desc}</p>
+              <div class="book-meta">
+                <div class="book-rating">
+                  <span class="stars" aria-hidden="true">${renderStars(book.rating)}</span>
+                  <span class="rating-num" aria-label="Rating: ${book.rating} out of 5, ${formatReviews(book.reviews)} reviews">
+                    ${book.rating} (${formatReviews(book.reviews)})
+                  </span>
+                </div>
+                <span class="book-price" aria-label="Price: $${book.price.toFixed(2)}">$${book.price.toFixed(2)}</span>
+              </div>
+              <button
+                class="btn-add"
+                aria-label="Add ${book.title} to your reading list"
+                data-id="${book.id}"
+              >
+                <span aria-hidden="true">+</span> Add to List
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      const count = filtered.length;
+      document.querySelector('.section-count').textContent = `${count} title${count !== 1 ? 's' : ''}`;
+      document.querySelector('.section-count').setAttribute('aria-label', `${count} books shown`);
+      announce(`Showing ${count} book${count !== 1 ? 's' : ''}`);
+    }
+
+    /* ─── Login ─────────────────────────────────────────────── */
+    const loginForm  = $('login-form');
+    const errorBanner = $('login-error');
+    const pwdField   = $('password');
+    const userField  = $('username');
+    const pwdToggle  = $('pwd-toggle');
+
+    // Password visibility toggle
+    pwdToggle.addEventListener('click', () => {
+      const show = pwdField.type === 'password';
+      pwdField.type = show ? 'text' : 'password';
+      pwdToggle.textContent = show ? 'hide' : 'show';
+      pwdToggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      pwdToggle.setAttribute('aria-pressed', String(show));
+    });
+
+    function showError(msg) {
+      $('login-error-text').textContent = msg;
+      errorBanner.classList.add('visible');
+      userField.setAttribute('aria-invalid', 'true');
+      pwdField.setAttribute('aria-invalid', 'true');
+      userField.focus();
+    }
+
+    function clearError() {
+      errorBanner.classList.remove('visible');
+      userField.removeAttribute('aria-invalid');
+      pwdField.removeAttribute('aria-invalid');
+    }
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      clearError();
+
+      const u = userField.value.trim();
+      const p = pwdField.value;
+
+      if (!u) { showError('Please enter your username.'); return; }
+      if (!p) { showError('Please enter your password.'); return; }
+
+      if (u === AUTH.username && p === AUTH.password) {
+        announce('Login successful. Loading catalogue…');
+        $('login-view').classList.remove('active');
+        $('catalogue-view').classList.add('active');
+        renderBooks();
+        $('main-content').focus();
+      } else {
+        showError('Invalid username or password. Please try again.');
+      }
+    });
+
+    /* ─── Filters ────────────────────────────────────────────── */
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-filter]');
+      if (!btn) return;
+
+      document.querySelectorAll('[data-filter]').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      renderBooks(btn.dataset.filter);
+    });
+
+    /* ─── Add to list ────────────────────────────────────────── */
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('[data-id]');
+      if (!btn) return;
+      const id   = Number(btn.dataset.id);
+      const book = BOOKS.find(b => b.id === id);
+      if (!book) return;
+      btn.textContent = '✓ Added';
+      btn.style.background = 'var(--sage)';
+      btn.disabled = true;
+      btn.setAttribute('aria-label', `${book.title} added to your reading list`);
+      announce(`${book.title} added to your reading list.`);
+    });
+
+    /* ─── Logout ─────────────────────────────────────────────── */
+    $('logout-btn').addEventListener('click', () => {
+      $('catalogue-view').classList.remove('active');
+      $('login-view').classList.add('active');
+      loginForm.reset();
+      clearError();
+      pwdField.type = 'password';
+      pwdToggle.textContent = 'show';
+      pwdToggle.setAttribute('aria-label', 'Show password');
+      pwdToggle.setAttribute('aria-pressed', 'false');
+      announce('You have been signed out.');
+      userField.focus();
+    });
+
+  })();
+  </script>
+</body>
+</html>
